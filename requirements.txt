@@ -1,0 +1,16 @@
+# --- Web / API ---
+fastapi>=0.115,<1.0
+uvicorn[standard]>=0.30
+python-multipart>=0.0.9
+
+# --- 数据层 ---
+sqlalchemy>=2.0.30,<2.1
+alembic>=1.13
+psycopg[binary]>=3.2
+pgvector>=0.3          # segments.embedding 的 Vector 类型
+
+# --- 配置 / 安全 ---
+pydantic>=2.7
+pydantic-settings>=2.4
+python-jose[cryptography]>=3.3
+passlib[bcrypt]>=1.7.4

@@ -1,0 +1,27 @@
+# 只起依赖，应用在宿主机跑（uvicorn --reload 才快）
+#   docker compose -f docker-compose.dev.yml up -d
+services:
+  postgres:
+    image: pgvector/pgvector:pg16
+    container_name: bidsentry-pg
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: bidsentry
+      POSTGRES_PASSWORD: bidsentry
+      POSTGRES_DB: bidsentry
+      # 中文排序/大小写按 C 走，后面法条检索比较稳定
+      POSTGRES_INITDB_ARGS: "--encoding=UTF8 --locale=C"
+    ports:
+      # 5433 而不是 5432：本机已经装了 PostgreSQL 18 占了 5432，
+      # 两个都抢 5432 时，连接会静默落到本机那个库上（表现为 password 认证失败）
+      - "5433:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U bidsentry -d bidsentry"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+volumes:
+  pgdata:
