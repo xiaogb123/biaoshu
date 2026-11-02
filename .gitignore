@@ -14,6 +14,7 @@ venv/
 # 数据（样本 PDF 和上传文件不进 git，第 5 周再决定是否用 LFS）
 data/uploads/
 data/samples/*.pdf
+data/reference/*.pdf
 !data/samples/.gitkeep
 
 # 工具
