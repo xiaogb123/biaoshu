@@ -7,6 +7,7 @@ from sqlalchemy import delete
 
 from app.db.models import DocPage, Document
 from app.db.session import SessionLocal
+from app.services.ocr import ocr_image
 from app.services.storage import make_key, storage
 
 logger = logging.getLogger(__name__)
@@ -40,8 +41,10 @@ def parse_pdf(document_id:int,path:Path) -> int:
                     image_key = None
                     if need_ocr:
                         pix = page.get_pixmap(dpi=IMAGE_DPI)
+                        png = pix.tobytes("png")
                         image_key = make_key(doc.tenant_id,".png")
-                        storage.save(image_key,BytesIO(pix.tobytes("png")))
+                        storage.save(image_key,BytesIO(png))
+                        text = ocr_image(png)
                         pix = None
 
                     batch.append({
