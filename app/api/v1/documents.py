@@ -13,11 +13,11 @@ from sqlalchemy.orm import Session
 
 from app.api.v1.deps import get_current_tenant
 from app.core.config import settings
-from app.db.models import Document, Tenant
+from app.db.models import Document, Job, Tenant
 from app.db.session import get_db
-from app.schemas.document import DocumentOut
-from app.services.pdf import parse_pdf
+from app.schemas.document import UploadAccepted
 from app.services.storage import make_key, storage
+from app.workers.tasks import parse_document, queue
 
 router = APIRouter(prefix="/api/v1/documents", tags=["documents"])
 
@@ -25,14 +25,14 @@ CHUNK_SIZE = 1024 * 1024
 MAX_BYTES = settings.MAX_UPLOAD_MB * 1024 * 1024
 
 
-@router.post("", response_model=DocumentOut, status_code=status.HTTP_201_CREATED)
+@router.post("", response_model=UploadAccepted, status_code=status.HTTP_201_CREATED)
 def upload_document(
     file: UploadFile = File(...),
     tender_id: int = Form(...),
     kind: str = Form("tender"),
     db: Session = Depends(get_db),
     tenant: Tenant = Depends(get_current_tenant),
-) -> Document:
+) -> UploadAccepted:
     filename = file.filename or "unnamed.pdf"
     if not filename.lower().endswith(".pdf"):
         raise HTTPException(status.HTTP_400_BAD_REQUEST, "只接受 .pdf 文件")
@@ -75,7 +75,7 @@ def upload_document(
             )
         ).first()
         if existing is not None:
-            return existing
+            return UploadAccepted(document_id = existing.id,job_id = None)
 
         key = make_key(tenant.id)
         with tmp_path.open("rb") as src:
@@ -94,9 +94,26 @@ def upload_document(
         db.commit()
         db.refresh(doc)
 
-        parse_pdf(doc.id, tmp_path)
-        db.refresh(doc)
-        return doc
+        job = Job(
+            tenant_id=tenant.id,
+            kind = "parse_document",
+            payload={"document_id": doc.id},
+            status = "queued",
+        )
+        db.add(job)
+        db.commit()
+        db.refresh(job)
+
+        rq_job = queue.enqueue(
+            parse_document,
+            task_id=job.id,
+            document_id = doc.id,
+            path = str(storage.path(key)),
+        )
+
+        job.payload = {"document_id":doc.id,"rq_job_id":rq_job.id}
+        db.commit()
+        return UploadAccepted(document_id = doc.id,job_id = job.id)
 
     finally:
         tmp_path.unlink(missing_ok=True)

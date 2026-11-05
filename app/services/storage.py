@@ -36,4 +36,7 @@ class LocalStorage:
     def delete(self,key:str) -> None:
         self._path(key).unlink(missing_ok = True)
 
+    def path(self,key:str) -> Path:
+        return self._path(key)
+
 storage = LocalStorage(settings.UPLOAD_DIR)

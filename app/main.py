@@ -6,7 +6,7 @@ from fastapi import FastAPI
 
 from app.core.config import settings
 from app.core.logging import setup_logging
-from app.api.v1 import documents
+from app.api.v1 import documents,jobs
 
 
 @asynccontextmanager
@@ -22,6 +22,7 @@ app = FastAPI(
     lifespan=lifespan,
 )
 app.include_router(documents.router)
+app.include_router(jobs.router)
 
 
 @app.get("/health", tags=["meta"])
