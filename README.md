@@ -26,6 +26,25 @@ uvicorn app.main:app --reload
 
 打开 http://127.0.0.1:8000/docs ，`GET /health` 返回 `{"status":"ok"}`。
 
+## 起 worker（Windows 必须加参数）
+
+```bash
+# 必须在项目根目录执行，否则 worker import 不到 app 包
+rq worker --url redis://localhost:6379 --worker-class rq.worker.SimpleWorker
+```
+
+**`--worker-class rq.worker.SimpleWorker` 不能省。**
+
+RQ 默认用 `os.fork()` 开子进程执行任务，而 Windows 没有 `fork`，不加这个参数一投递任务就崩：
+
+```
+AttributeError: module 'os' has no attribute 'fork'
+```
+
+报错信息完全不提 Windows，很容易查半天。SimpleWorker 不开子进程，任务在 worker 进程内执行；代价是**没有超时强杀**，一个卡死的任务会拖住整个 worker。
+
+worker 起来后占住一个终端（会阻塞在 `Listening on default...`），所以日常开发要开两个终端：一个跑 worker，一个跑命令。
+
 ## Day 1 验收
 
 - [ ] `docker compose -f docker-compose.dev.yml ps` 里 postgres 是 healthy
