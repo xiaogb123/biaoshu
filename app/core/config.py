@@ -30,6 +30,8 @@ class Settings(BaseSettings):
     MAX_UPLOAD_MB: int = 50
 
     DEEPSEEK_API_KEY: str = ""
+    REDIS_URL: str = "redis://localhost:6379/0"
+
 
     @field_validator("UPLOAD_DIR")
     @classmethod

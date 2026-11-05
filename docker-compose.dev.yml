@@ -23,5 +23,18 @@ services:
       timeout: 3s
       retries: 10
 
+  redis:
+    image: redis:7-alpine
+    container_name: bidsentry-redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    healthcheck:
+      # redis-cli ping 正常返回 PONG；grep -q 再用输出内容确认一次
+      test: ["CMD-SHELL", "redis-cli ping | grep -q PONG"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
 volumes:
   pgdata:
