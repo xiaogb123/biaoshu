@@ -60,9 +60,9 @@ for i, batch in enumerate(batches, 1):
 
 print(f"\n合计 {total} 条, 耗时 {time.time() - t0:.0f}s\n")
 
-print("A 严格命中(受PDF折行干扰,仅参考):", rate(a_ok, total))
-print("B 去空白命中(真实忠实度)      :", rate(b_ok, total))
-print("C 本页去空白:", rate(b_ok + len(soft), total))
+print("A 整批严格命中(受PDF折行干扰,仅参考):", rate(a_ok, total))
+print("B 本页严格命中(仅参考)             :", rate(b_ok, total))
+print("C 去空白命中(真实忠实度,看这个)    :", rate(b_ok + len(soft), total))
 print(f"  ├ 仅换行不同: {len(soft)} 条")
 print(f"  └ 页码真错  : {len(bad)} 条")
 
