@@ -24,7 +24,7 @@ class ClauseCategory(str, Enum):
 
 # 关键词兜底：模型分类漂移时用它纠偏（Day 5 用）
 CATEGORY_KEYWORDS: dict[ClauseCategory, tuple[str, ...]] = {
-    ClauseCategory.disqualification: ("废标", "无效投标", "否决", "不予受理", "取消投标资格"),
+    ClauseCategory.disqualification: ("废标", "无效投标", "投标无效", "否决", "不予受理", "取消投标资格"),
     ClauseCategory.format: ("密封", "装订", "签字", "盖章", "正本", "副本", "份数"),
     ClauseCategory.submission: ("截止时间", "递交", "提交地点", "保证金", "开标"),
     ClauseCategory.scoring: ("评分", "分值", "得分", "加分", "评审因素", "权重"),
