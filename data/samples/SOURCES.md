@@ -21,3 +21,25 @@
 北京 ccgp-beijing、贵州 ggzy.guizhou）。
 
 所以下次找文件的正确姿势不是"点公告看附件"，而是直接搜 PDF 直链。
+
+## 第二批（2026-11-09 补充，6 份）
+
+| 文件名 | 项目 | 页数 | 类型 | 来源 |
+|---|---|---|---|---|
+| 河北-2023-雄安施工统筹-文字版 | 2023 年度雄安新区建设工程项目施工统筹 | 82 | 文字版 | http://www.ccgp-hebei.gov.cn/BidWinAnncFiles/54c733df-4874-44fb-826d-ddab42b3fef7.pdf |
+| 河北-2024-唐县设备图书-文字版 | 唐县薄弱环节能力提升设备及图书购置 | 57 | 文字版 | http://ccgp-hebei.gov.cn/BidWinAnncFiles/ecb3a071-ee27-4bd2-a1f0-6034fa96dcce.pdf |
+| 河北-2025-保定妇幼试剂采购-文字版 | 保定市妇幼保健院 2025 年消除母婴传播试剂采购 | 88 | 文字版（"双盲"评审示范文本） | http://www.ccgp-hebei.gov.cn/BidWinAnncFiles/bf712738-1e23-a1ac-4b29-42082a82c881.pdf |
+| 陕西-2024-西安远东一中改造-文字版 | 西安市远东第一中学校园改造工程 | 119 | 文字版 | http://www.ccgp-shaanxi.gov.cn/gpx-bid-file/ZF_JGBM_000003/610104/2024/10/16/8a69c85191b241d9019293500315283c/gpx-template/8a69c25092d1e2940193054de6c94e99.pdf |
+| 陕西-2025-未央市政桥梁检测-文字版 | 2024 年未央区市政道路桥梁安全检测项目 | 91 | 文字版 | https://www.ccgp-shaanxi.gov.cn/gpx-bid-file/ZF_JGBM_000003/zone/2025/1/12/project/gpx-template/8a69c5e496f5255e01971ed6bafd44d1.pdf |
+| 四川-2025-大竹县食堂食材-采购需求 | 大竹县 2025 年学校食堂大宗食材采购 | 15 | 文字版（采购需求书，非招标文件） | https://gpx.ccgp-sichuan.gov.cn/gpx-bid-file/ZF_JGBM_000008/zone/2024/12/15/project/gpx-template/8a69ced7950238660195024485892a68.pdf |
+
+**累计 11 份**（fixture 不算）：河北 4 / 陕西 3 / 北京 2 / 贵州 1 / 四川 1，覆盖 5 个省。
+
+### 第二批踩到的三个坑
+
+1. 陕西的直链带 `?accessCode=...`，**必须整条保留**，去掉 query 参数会 403。
+2. 四川的直链**必须走 https 并带 Referer**，少了 Referer 返回 502 网关错误：
+   `Invoke-WebRequest -Uri <https地址> -Headers @{Referer='http://www.ccgp-sichuan.gov.cn/'}`
+3. 山东（sdgp.sdcz.gov.cn）的 pdf 直链现在返回一段 HTML，用 JS 跳转到
+   https://www.ccgp-shandong.gov.cn ，命令行拿不到真文件，暂时放弃。
+
