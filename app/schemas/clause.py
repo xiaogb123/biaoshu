@@ -12,7 +12,7 @@
 """
 
 from enum import Enum
-
+from pydantic import BaseModel, ConfigDict
 
 class ClauseCategory(str, Enum):
     qualification = "qualification"
@@ -29,3 +29,22 @@ CATEGORY_KEYWORDS: dict[ClauseCategory, tuple[str, ...]] = {
     ClauseCategory.submission: ("截止时间", "递交", "提交地点", "保证金", "开标"),
     ClauseCategory.scoring: ("评分", "分值", "得分", "加分", "评审因素", "权重"),
 }
+
+class ClauseOut(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    id: int
+    document_id: int
+    page_no: int
+    category: str
+    clause_no: str | None
+    text: str
+    quote: str
+    confidence: float
+
+
+class ClausePage(BaseModel):
+    items: list[ClauseOut]
+    total: int
+    page: int
+    page_size: int
