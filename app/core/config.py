@@ -30,6 +30,13 @@ class Settings(BaseSettings):
     MAX_UPLOAD_MB: int = 50
 
     DEEPSEEK_API_KEY: str = ""
+
+    # 向量模型：bge-m3，1024 维（和 segments.embedding vector(1024) 对齐）
+    # extra="ignore" 会让 .env 里没声明的变量被静默丢掉，所以这三个必须显式写出来
+    EMBED_API_KEY: str = ""
+    EMBED_BASE_URL: str = "https://api.siliconflow.cn/v1"
+    EMBED_MODEL: str = "BAAI/bge-m3"
+
     REDIS_URL: str = "redis://localhost:6379/0"
 
 
